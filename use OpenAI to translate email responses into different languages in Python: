@@ -1,0 +1,40 @@
+#kidus Berhnau
+import openai
+
+# set up OpenAI API credentials
+openai.api_key = "YOUR_API_KEY"
+
+# define function to generate translated response
+def generate_translated_response(sender_language, email_subject, email_body, target_language="en"):
+    # translate email body using OpenAI GPT-3
+    translation = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=f"translate from {sender_language} to {target_language}: {email_body}",
+        temperature=0.5,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        timeout=10,
+    )
+    translated_body = translation.choices[0].text.strip()
+
+    # generate response using OpenAI GPT-3
+    prompt = f"Hi! Thank you for your email about {email_subject}. Here is our response:\n{translated_body}"
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        temperature=0.5,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        timeout=10,
+    )
+    return response.choices[0].text.strip()
+
+# example usage
+sender_language = "fr"
+subject = "Besoin d'aide avec mon compte"
+body = "Bonjour, je n'arrive pas à me connecter à mon compte. Pouvez-vous m'aider ?"
+target_language = "en"
+response = generate_translated_response(sender_language, subject, body, target_language)
+print(response)
