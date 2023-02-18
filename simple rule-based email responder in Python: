@@ -1,0 +1,17 @@
+#kidus berhanu
+# define rules for handling different types of emails
+def handle_email(email_subject, email_body):
+    if "customer inquiry" in email_subject:
+        return "Thank you for your inquiry. We will get back to you shortly."
+    elif "support request" in email_subject:
+        return "We are sorry to hear you are having issues. Please provide more details so we can assist you better."
+    elif "sales inquiry" in email_subject:
+        return "Thank you for your interest in our products. Please provide more details about your inquiry so we can assist you better."
+    else:
+        return "Thank you for contacting us. Your message has been received and we will respond to you as soon as possible."
+
+# example usage
+subject = "customer inquiry"
+body = "I'm interested in your products, can you provide more information?"
+response = handle_email(subject, body)
+print(response)
