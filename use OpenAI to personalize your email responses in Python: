@@ -1,0 +1,64 @@
+#kidus berhanu
+import openai
+import re
+
+#  to set up OpenAI API credentials
+openai.api_key = "YOUR_API_KEY"
+
+#  to define function to generate personalized response
+def generate_personalized_response(sender_email, email_subject, email_body):
+    # extract relevant keywords from email body
+    keywords = extract_keywords(email_body)
+    
+    #  to generate personalized response using OpenAI GPT-3
+    prompt = f"Hi, {get_sender_name(sender_email)}! Thank you for your email about {email_subject}. Based on your interests, we think you might be interested in the following products:\n"
+    for keyword in keywords:
+        prompt += f"- {get_product_recommendation(keyword)}\n"
+    prompt += "Let us know if you have any questions or if there's anything else we can do for you."
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=prompt,
+        temperature=0.5,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        timeout=10,
+    )
+    return response.choices[0].text.strip()
+
+#  to define function to extract relevant keywords from email body
+def extract_keywords(email_body):
+    # implement your keyword extraction algorithm here
+    # for example, you could use a library like spaCy to extract named entities or noun phrases
+    # for simplicity, we'll just extract words that are longer than 4 characters
+    keywords = [word for word in email_body.split() if len(word) > 4]
+    return keywords
+
+#  to define function to get personalized product recommendation using OpenAI DALL-E
+def get_product_recommendation(keyword):
+    prompt = f"generate an image of a {keyword} product recommendation"
+    response = openai.Completion.create(
+        engine="image-alpha-001",
+        prompt=prompt,
+        temperature=0.5,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        timeout=10,
+    )
+    image_url = response.choices[0].text.strip()
+    return f"{keyword} - {image_url}"
+
+#  to define function to get sender's name from email address
+def get_sender_name(sender_email):
+    # implement your email parsing algorithm here
+    # for example, you could use a library like email.utils to parse the email address
+    # for simplicity, we'll just assume that the sender's name is the part before the "@" symbol
+    return re.search("^.*(?=@)", sender_email).group(0)
+
+# example usage
+sender_email = "Kidus.Berhanu@example.com"
+subject = "Looking for new gadgets"
+body = "Hi, I'm interested in buying new gadgets. Can you recommend anything?"
+response = generate_personalized_response(sender_email, subject, body)
+print(response)
